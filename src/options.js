@@ -39,17 +39,17 @@ function validate(lines) {
   return errors;
 }
 
-function load() {
+async function load() {
   try {
-    chrome.storage.sync.get({ botRegexSources: DEFAULTS }, (res) => {
-      fromLines(res?.botRegexSources || DEFAULTS);
-    });
-  } catch {
+    const res = await chrome.storage.sync.get({ botRegexSources: DEFAULTS });
+    fromLines(res?.botRegexSources || DEFAULTS);
+  } catch (e) {
+    showStatus(`Failed to load settings: ${e.message}`, false);
     fromLines(DEFAULTS);
   }
 }
 
-saveBtn.addEventListener("click", () => {
+saveBtn.addEventListener("click", async () => {
   const lines = toLines();
   const errs = validate(lines);
   if (errs.length) {
@@ -57,20 +57,18 @@ saveBtn.addEventListener("click", () => {
     return;
   }
   try {
-    chrome.storage.sync.set({ botRegexSources: lines }, () => {
-      showStatus("Saved");
-    });
+    await chrome.storage.sync.set({ botRegexSources: lines });
+    showStatus("Saved");
   } catch (e) {
     showStatus("Failed to save: " + e.message, false);
   }
 });
 
-resetBtn.addEventListener("click", () => {
+resetBtn.addEventListener("click", async () => {
   fromLines(DEFAULTS);
   try {
-    chrome.storage.sync.set({ botRegexSources: DEFAULTS }, () => {
-      showStatus("Defaults restored");
-    });
+    await chrome.storage.sync.set({ botRegexSources: DEFAULTS });
+    showStatus("Defaults restored");
   } catch (e) {
     showStatus("Failed to reset: " + e.message, false);
   }
