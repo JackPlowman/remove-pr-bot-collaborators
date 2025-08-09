@@ -1,4 +1,4 @@
-// GitHub Merge Message Bot Co-author Cleaner
+// Remove PR Bot Collaborators
 // Removes bot "Co-authored-by:" lines from merge commit messages.
 
 const DEFAULT_REGEX_SOURCES = [
@@ -27,25 +27,24 @@ function compileRegexes(sources) {
       out.push(new RegExp(src, "i"));
     } catch (e) {
       // Ignore invalid regex; keep going.
-      console.warn("[GH Bot Cleaner] Invalid regex source skipped:", src, e);
+      console.warn("[Remove PR Bot Collaborators] Invalid regex source skipped:", src, e);
     }
   }
   return out.length ? out : [new RegExp("\\[bot\\]", "i")];
 }
 
-function loadPatterns() {
+async function loadPatterns() {
   try {
-    chrome.storage.sync.get(
-      { botRegexSources: DEFAULT_REGEX_SOURCES },
-      (res) => {
-        botRegexes = compileRegexes(
-          res?.botRegexSources || DEFAULT_REGEX_SOURCES,
-        );
-        scheduleScan();
-      },
+    const res = await chrome.storage.sync.get({
+      botRegexSources: DEFAULT_REGEX_SOURCES,
+    });
+    botRegexes = compileRegexes(
+      res?.botRegexSources || DEFAULT_REGEX_SOURCES,
     );
+    scheduleScan();
   } catch (e) {
     // In case storage isn't available, continue with defaults.
+    console.warn("[Remove PR Bot Collaborators] Failed to load patterns, using defaults:", e);
   }
 }
 
@@ -139,7 +138,7 @@ const scan = () => {
     processTextareas();
   } catch (e) {
     // Avoid throwing in content scripts
-    // console.error("[GH Bot Cleaner] Error:", e);
+    // console.error("[Remove PR Bot Collaborators] Error:", e);
   }
 };
 
