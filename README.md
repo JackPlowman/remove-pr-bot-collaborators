@@ -1,8 +1,6 @@
 # Remove Pull Request Bot Collaborators
 
-Remove Pull Request Bot Collaborators from merge commit messages.
-
-Removes bot "Co-authored-by:" lines from GitHub merge commit messages when merging PRs (merge, squash, or rebase). Customize which patterns count as bots.
+Removes bot "Co-authored-by:" lines from GitHub merge commit messages when merging PRs (merge, squash, or rebase).
 
 ## Table of Contents
 

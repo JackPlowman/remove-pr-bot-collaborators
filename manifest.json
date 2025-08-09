@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "GitHub Merge Message Bot Co-author Cleaner",
+  "name": "Remove PR Bot Collaborators",
   "version": "1.0.0",
-  "description": "Removes bot co-authors from GitHub merge commit messages.",
+  "description": "Removes bot \"Co-authored-by:\" lines from GitHub merge commit messages when merging PRs.",
   "permissions": ["storage"],
   "host_permissions": ["https://github.com/*"],
   "content_scripts": [
