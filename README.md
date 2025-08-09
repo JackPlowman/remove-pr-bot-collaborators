@@ -35,7 +35,7 @@ GitHub auto-adds `Co-authored-by:` lines from PR commits. Bots like `dependabot[
 
 ## Configure bot patterns
 
-Open the extension's Options page. Each line is a JavaScript regex (no slashes), matched against:
+Open the extension's Options page. Each line is a JavaScript regular expression (no slashes), matched against:
 
 - The co-author display name.
 - The full email.
@@ -54,7 +54,7 @@ Examples you can add:
 ## Notes
 
 - Non-bot co-authors are preserved.
-- The cleaner is idempotent; it won't modify your message beyond removing bot lines and trimming trailing blank lines.
+- The tool is idempotent; it won't modify your message beyond removing bot lines and trimming trailing empty lines.
 - This relies on `Co-authored-by:` lines present in the message; it won’t affect other text.
 
 ## Privacy
