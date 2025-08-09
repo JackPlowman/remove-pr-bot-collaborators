@@ -1,0 +1,16 @@
+{
+  "manifest_version": 3,
+  "name": "GitHub Merge Message Bot Co-author Cleaner",
+  "version": "1.0.0",
+  "description": "Removes bot co-authors from GitHub merge commit messages.",
+  "permissions": ["storage"],
+  "host_permissions": ["https://github.com/*"],
+  "content_scripts": [
+    {
+      "matches": ["https://github.com/*"],
+      "js": ["src/content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "options_page": "src/options.html"
+}

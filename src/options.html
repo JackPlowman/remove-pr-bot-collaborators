@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>GitHub Bot Co-author Cleaner – Options</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      body {
+        font-family:
+          system-ui,
+          -apple-system,
+          Segoe UI,
+          Roboto,
+          Ubuntu,
+          Cantarell,
+          Noto Sans,
+          Arial,
+          sans-serif;
+        margin: 24px;
+        color: #24292f;
+      }
+      h1 {
+        font-size: 20px;
+        margin-bottom: 8px;
+      }
+      p {
+        margin: 8px 0;
+      }
+      textarea {
+        width: 100%;
+        min-height: 160px;
+        font-family:
+          ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono",
+          monospace;
+        font-size: 13px;
+      }
+      .actions {
+        margin-top: 12px;
+        display: flex;
+        gap: 8px;
+      }
+      button {
+        padding: 6px 10px;
+      }
+      .hint {
+        color: #57606a;
+        font-size: 12px;
+      }
+      .status {
+        margin-top: 8px;
+        font-size: 12px;
+      }
+      .error {
+        color: #d1242f;
+      }
+      .ok {
+        color: #1a7f37;
+      }
+      ul {
+        margin: 8px 0 0 18px;
+      }
+      code {
+        background: #f6f8fa;
+        padding: 1px 4px;
+        border-radius: 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Bot Patterns</h1>
+    <p>
+      Provide one JavaScript regular expression per line (without the
+      surrounding slashes). These patterns are matched against the co-author
+      name, email, and local-part of the email to identify bots.
+    </p>
+    <p class="hint">
+      Defaults include: <code>\[bot\]</code> and
+      <code>(?:^|[+\-._])bot(?:$|[+\-._])</code>
+    </p>
+
+    <textarea id="patterns"></textarea>
+
+    <div class="actions">
+      <button id="save">Save</button>
+      <button id="reset">Restore Defaults</button>
+    </div>
+
+    <div id="status" class="status"></div>
+
+    <h2>Examples</h2>
+    <ul>
+      <li>
+        <code>\[bot\]</code> — matches <code>dependabot[bot]</code>,
+        <code>github-actions[bot]</code>
+      </li>
+      <li>
+        <code>(?:^|[+\-._])bot(?:$|[+\-._])</code> — matches
+        <code>snyk-bot</code>, <code>renovate-bot</code>
+      </li>
+      <li>
+        <code>^codecov(?:-bot)?$</code> — match local-part exactly
+        <code>codecov</code> or <code>codecov-bot</code>
+      </li>
+    </ul>
+
+    <script src="options.js"></script>
+  </body>
+</html>
