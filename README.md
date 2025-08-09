@@ -1,8 +1,10 @@
-# Repository Name
+# Remove Pull Request Bot Collaborators
+
+Remove Pull Request Bot Collaborators from merge commit messages.
 
 ## Table of Contents
 
-- [Repository Name](#repository-name)
+- [Remove Pull Request Bot Collaborators](#remove-pull-request-bot-collaborators)
   - [Table of Contents](#table-of-contents)
   - [Contributing](#contributing)
 
