@@ -1,0 +1,16 @@
+{
+  "manifest_version": 3,
+  "name": "Remove PR Bot Collaborators",
+  "version": "1.0.0",
+  "description": "Removes bot \"Co-authored-by:\" lines from GitHub merge commit messages when merging PRs.",
+  "permissions": ["storage"],
+  "host_permissions": ["https://github.com/*"],
+  "content_scripts": [
+    {
+      "matches": ["https://github.com/*"],
+      "js": ["src/content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "options_page": "src/options.html"
+}
