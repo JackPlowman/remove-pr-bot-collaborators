@@ -1,0 +1,8 @@
+{
+  "name": "remove-pr-bot-collaborators-development",
+  "private": true,
+  "dependencies": {
+    "eslint": "9.33.0",
+    "prettier": "3.6.2"
+  }
+}
