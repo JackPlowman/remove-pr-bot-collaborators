@@ -1,4 +1,32 @@
 # ------------------------------------------------------------------------------
+# General Commands
+# ------------------------------------------------------------------------------
+
+# Install Node Dependencies
+install:
+    npm install
+
+# Lint typescript code with ESLint
+lint:
+    cd src && npx eslint .
+
+# Lint typescript code with ESLint and generate a SARIF file
+eslint-with-sarif:
+    cd src && npx eslint . --format @microsoft/eslint-formatter-sarif --output-file eslint-results.sarif
+
+# ------------------------------------------------------------------------------
+# Prettier
+# ------------------------------------------------------------------------------
+
+# Check if code is formatted correctly
+src-prettier-check:
+    cd src && npx prettier . --check
+
+# Format code with Prettier
+src-prettier-format:
+    cd src && npx prettier . --write
+
+# ------------------------------------------------------------------------------
 # Prettier
 # ------------------------------------------------------------------------------
 
