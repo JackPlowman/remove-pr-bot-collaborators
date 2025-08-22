@@ -6,6 +6,8 @@ const DEFAULT_REGEX_SOURCES = [
   "\\[bot\\]",
   // Matches tokenized bot names like -bot, +bot, .bot or bot end
   "(?:^|[+\\-._])bot(?:$|[+\\-._])",
+  // Matches GitHub Copilot co-author lines,
+  "Copilot",
 ];
 
 let botRegexes = compileRegexes(DEFAULT_REGEX_SOURCES);
