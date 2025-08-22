@@ -24,7 +24,7 @@ src-prettier-check:
 
 # Format code with Prettier
 src-prettier-format:
-    cd src && npx prettier . --check --write
+    cd src && npx prettier . --write
 
 # ------------------------------------------------------------------------------
 # Prettier
