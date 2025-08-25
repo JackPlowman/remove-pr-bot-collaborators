@@ -42,7 +42,9 @@
 - color: 66A615
   name: just
   description: Pull requests that update Just code
-
+- color: 2b67c6
+  name: javascript
+  description: Pull requests that update JavaScript code
 # Components
 - color: ff0073
   name: git_hooks
