@@ -24,19 +24,10 @@ markdown:
                 "LICENCE",
                 ".github/pull_request_template.md",
               ]
-python:
+javascript:
   - any:
       - changed-files:
-          - any-glob-to-any-file: ["*.py", "**/*.py"]
-typescript:
-  - any:
-      - changed-files:
-          - any-glob-to-any-file:
-              ["*.ts", "*.tsx", "**/*.ts", "**/*.tsx", "**/tsconfig.json"]
-shell:
-  - any:
-      - changed-files:
-          - any-glob-to-any-file: ["**/*.sh"]
+          - any-glob-to-any-file: ["*.js", "**/*.js"]
 just:
   - any:
       - changed-files:

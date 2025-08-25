@@ -36,9 +36,6 @@
 - color: 000000
   name: github_actions
   description: Pull requests that update GitHub Actions code
-- color: 00ff44
-  name: shell
-  description: Pull requests that update Shell code
 - color: 1900ff
   name: markdown
   description: Pull requests that update Markdown documentation
@@ -46,11 +43,8 @@
   name: just
   description: Pull requests that update Just code
 - color: 2b67c6
-  name: python
-  description: Pull requests that update Python code
-- color: 00ff1e
-  name: typescript
-  description: Pull requests that update TypeScript code
+  name: javascript
+  description: Pull requests that update JavaScript code
 # Components
 - color: ff0073
   name: git_hooks
