@@ -78,6 +78,48 @@ function isBotCoAuthor(line) {
   });
 }
 
+function isSignedOffLine(line) {
+  // Typical DCO footer. Be lenient with spaces/hyphens.
+  return /\bSigned[-\s]*off[-\s]*by:\s+/i.test(line);
+}
+
+function parseSignedOff(line) {
+  // Signed-off-by: Name <email>
+  const m = /^\s*Signed[-\s]*off[-\s]*by:\s*(.+?)\s*<([^>]+)>\s*$/i.exec(line);
+  if (!m) return null;
+  const name = (m[1] || "").trim();
+  const email = (m[2] || "").trim();
+  return { name, email };
+}
+
+function getPRAuthorUsername() {
+  try {
+    // Heuristics to find PR author username in the header area
+    const selectors = [
+      ".gh-header-meta .author",
+      ".gh-header-show .author",
+      "#partial-discussion-header .author",
+      "#discussion_bucket .gh-header-meta .author",
+      "#discussion_bucket a.author",
+      "a.author",
+    ];
+    for (const sel of selectors) {
+      const el = document.querySelector(sel);
+      const txt = el?.textContent?.trim();
+      if (txt && /[A-Za-z0-9-_.]/.test(txt)) {
+        return txt.toLowerCase();
+      }
+    }
+  } catch {}
+  return null;
+}
+
+function normalizeEmailUser(email) {
+  // Strip anything after "+" and before domain (GitHub noreply often uses username+id@users.noreply.github.com)
+  const user = (email || "").split("@")[0] || "";
+  return (user.split("+")[0] || user).toLowerCase();
+}
+
 function cleanCommitMessageValue(value) {
   if (!value || !value.includes("Co-authored-by:")) {
     return { text: value, changed: false };
@@ -86,13 +128,57 @@ function cleanCommitMessageValue(value) {
   const lines = value.split(/\r?\n/);
   const filtered = [];
   let changed = false;
+  let removedBotCoAuthor = false;
 
   for (const line of lines) {
     if (isCoAuthorLine(line) && isBotCoAuthor(line)) {
       changed = true;
+      removedBotCoAuthor = true;
       continue; // drop bot co-author line
     }
     filtered.push(line);
+  }
+
+  // If we removed a bot co-author, and the Signed-off-by is the PR creator, drop both
+  if (removedBotCoAuthor) {
+    const prAuthor = getPRAuthorUsername();
+    if (prAuthor) {
+      const idx = filtered.findIndex((l) => isSignedOffLine(l));
+      if (idx !== -1) {
+        const info = parseSignedOff(filtered[idx]);
+        if (info) {
+          const emailUser = normalizeEmailUser(info.email);
+          const nameLower = info.name.toLowerCase();
+          const matchesAuthor =
+            emailUser === prAuthor ||
+            nameLower === prAuthor ||
+            nameLower.includes(`@${prAuthor}`);
+          if (matchesAuthor) {
+            // Remove the signed-off line
+            filtered.splice(idx, 1);
+            changed = true;
+
+            // If there's a '---' separator directly above (ignoring blank lines), remove it too
+            let j = Math.min(idx - 1, filtered.length - 1);
+            while (j >= 0 && filtered[j].trim() === "") j--;
+            if (j >= 0 && /^-{3,}$/.test(filtered[j].trim())) {
+              filtered.splice(j, 1);
+              changed = true;
+            } else {
+              // Alternatively, remove any lone '---' at the end if no remaining metadata
+              const hasCoAuthorsLeft = filtered.some((l) => isCoAuthorLine(l));
+              if (!hasCoAuthorsLeft) {
+                const sepIdx = filtered.findIndex((l) => /^\s*-{3,}\s*$/.test(l));
+                if (sepIdx !== -1) {
+                  filtered.splice(sepIdx, 1);
+                  changed = true;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   }
 
   // Remove trailing blank lines
@@ -121,7 +207,6 @@ function processTextareas() {
       // Fire events so GitHub UI updates previews/counters
       ta.dispatchEvent(new Event("input", { bubbles: true }));
       ta.dispatchEvent(new Event("change", { bubbles: true }));
-      // console.debug("[GH Bot Cleaner] Cleaned bot co-authors from commit message.");
     }
   }
 }
@@ -140,7 +225,6 @@ const scan = () => {
     processTextareas();
   } catch (e) {
     // Avoid throwing in content scripts
-    // console.error("[Remove PR Bot Collaborators] Error:", e);
   }
 };
 
