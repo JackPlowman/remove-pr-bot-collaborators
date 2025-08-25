@@ -27,8 +27,7 @@ markdown:
 javascript:
   - any:
       - changed-files:
-          - any-glob-to-any-file:
-              ["*.js", "**/*.js"]
+          - any-glob-to-any-file: ["*.js", "**/*.js"]
 just:
   - any:
       - changed-files:
