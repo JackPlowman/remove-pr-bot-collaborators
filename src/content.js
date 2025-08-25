@@ -114,10 +114,30 @@ function getPRAuthorUsername() {
   return null;
 }
 
-function normalizeEmailUser(email) {
-  // Strip anything after "+" and before domain (GitHub noreply often uses username+id@users.noreply.github.com)
-  const user = (email || "").split("@")[0] || "";
-  return (user.split("+")[0] || user).toLowerCase();
+function extractUsernameCandidates(email, name) {
+  const out = new Set();
+  const lc = (s) => (s || "").toLowerCase();
+
+  const [localRaw = "", domain = ""] = (email || "").split("@");
+  const local = lc(localRaw);
+  const dom = lc(domain);
+
+  if (local) out.add(local);
+  if (local.includes("+")) {
+    const [left, right] = local.split("+", 2);
+    if (left) out.add(left);
+    if (right) out.add(right);
+    // For GitHub noreply pattern: id+username@users.noreply.github.com
+    if (dom.endsWith("users.noreply.github.com") && right) {
+      out.add(right);
+    }
+  }
+
+  // Derive a username-ish candidate from the name by stripping spaces and punctuation
+  const nameCandidate = lc((name || "").replace(/[^a-z0-9-_]+/gi, ""));
+  if (nameCandidate) out.add(nameCandidate);
+
+  return out;
 }
 
 function cleanCommitMessageValue(value) {
@@ -147,10 +167,10 @@ function cleanCommitMessageValue(value) {
       if (idx !== -1) {
         const info = parseSignedOff(filtered[idx]);
         if (info) {
-          const emailUser = normalizeEmailUser(info.email);
+          const candidates = extractUsernameCandidates(info.email, info.name);
           const nameLower = info.name.toLowerCase();
           const matchesAuthor =
-            emailUser === prAuthor ||
+            candidates.has(prAuthor) ||
             nameLower === prAuthor ||
             nameLower.includes(`@${prAuthor}`);
           if (matchesAuthor) {
