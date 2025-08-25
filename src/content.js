@@ -141,13 +141,14 @@ function extractUsernameCandidates(email, name) {
 }
 
 function cleanCommitMessageValue(value) {
-  if (!value || !value.includes("Co-authored-by:")) {
+  if (typeof value !== "string" || !value) {
     return { text: value, changed: false };
   }
 
   const lines = value.split(/\r?\n/);
   const filtered = [];
   let changed = false;
+  const hadCoAuthorsBefore = lines.some((l) => isCoAuthorLine(l));
   let removedBotCoAuthor = false;
 
   for (const line of lines) {
@@ -159,8 +160,10 @@ function cleanCommitMessageValue(value) {
     filtered.push(line);
   }
 
-  // If we removed a bot co-author, and the Signed-off-by is the PR creator, drop both
-  if (removedBotCoAuthor) {
+  const hasCoAuthorsLeft = filtered.some((l) => isCoAuthorLine(l));
+
+  // If we removed any co-author (bot by us or otherwise none remain now), and the Signed-off-by is the PR creator, drop both
+  if (removedBotCoAuthor || (hadCoAuthorsBefore && !hasCoAuthorsLeft)) {
     const prAuthor = getPRAuthorUsername();
     if (prAuthor) {
       const idx = filtered.findIndex((l) => isSignedOffLine(l));
@@ -185,9 +188,8 @@ function cleanCommitMessageValue(value) {
               filtered.splice(j, 1);
               changed = true;
             } else {
-              // Alternatively, remove any lone '---' at the end if no remaining metadata
-              const hasCoAuthorsLeft = filtered.some((l) => isCoAuthorLine(l));
-              if (!hasCoAuthorsLeft) {
+              // Alternatively, remove any lone '---' if no remaining metadata
+              if (!filtered.some((l) => isCoAuthorLine(l))) {
                 const sepIdx = filtered.findIndex((l) => /^\s*-{3,}\s*$/.test(l));
                 if (sepIdx !== -1) {
                   filtered.splice(sepIdx, 1);
@@ -217,8 +219,8 @@ function processTextareas() {
   for (const ta of textareas) {
     // Only touch textareas that look like commit messages:
     // Heuristic: contains "Co-authored-by:" which GitHub adds during merges.
-    const val = ta.value;
-    if (typeof val !== "string" || !val.includes("Co-authored-by:")) continue;
+  const val = ta.value;
+  if (typeof val !== "string") continue;
 
     const { text, changed } = cleanCommitMessageValue(val);
     if (changed && text !== val) {
