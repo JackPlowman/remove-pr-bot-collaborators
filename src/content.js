@@ -110,8 +110,8 @@ function getPRAuthorUsername() {
         return txt.toLowerCase();
       }
     }
-  } catch {
-
+  } catch (e) {
+    console.warn("[Remove PR Bot Collaborators] Failed to get PR author username:", e);
   }
   return null;
 }
@@ -248,7 +248,7 @@ const scan = () => {
   try {
     processTextareas();
   } catch (e) {
-    // Avoid throwing in content scripts
+    console.debug("[Remove PR Bot Collaborators] Error during scan:", e);
   }
 };
 
