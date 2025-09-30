@@ -59,7 +59,7 @@ jobs:
           cache-dependency-path: "package-lock.json"
       - name: Set up Just
         uses: extractions/setup-just@e33e0265a09d6d736e2ee1e0eb685ef1de4669ff # v3.0.0
-      - name: Install Dashboard Dependencies
+      - name: Install Dependencies
         run: just install
       - name: Run ESLint
         env:
