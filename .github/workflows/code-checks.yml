@@ -37,3 +37,39 @@ jobs:
     uses: JackPlowman/reusable-workflows/.github/workflows/codeql-analysis.yml@a5950751b77827654b888eb6b52a5c7fbca3e4fa # v2025.09.30.01
     with:
       language: ${{ matrix.language }}
+
+  run-javascript-code-checks:
+    name: Run JavaScript Code Checks
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write # Allow the workflow to upload analysis results
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Set up Just
+        uses: extractions/setup-just@e33e0265a09d6d736e2ee1e0eb685ef1de4669ff # v3.0.0
+      - name: Set up Node.js with Cache
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+        with:
+          node-version-file: "package.json"
+          cache: "npm"
+          cache-dependency-path: "package-lock.json"
+      - name: Set up Just
+        uses: extractions/setup-just@e33e0265a09d6d736e2ee1e0eb685ef1de4669ff # v3.0.0
+      - name: Install Dashboard Dependencies
+        run: just install
+      - name: Run ESLint
+        env:
+          SARIF_ESLINT_IGNORE_SUPPRESSED: "true"
+        run: just eslint-with-sarif
+        continue-on-error: true
+      - name: Upload analysis results to GitHub
+        uses: github/codeql-action/upload-sarif@f1f6e5f6af878fb37288ce1c627459e94dbf7d01 # v3.30.1
+        with:
+          sarif_file: eslint-results.sarif
+          wait-for-processing: true
+      - name: Run ESLint
+        run: just lint
