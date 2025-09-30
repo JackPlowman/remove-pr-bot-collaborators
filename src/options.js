@@ -30,7 +30,6 @@ function validate(lines) {
   const errors = [];
   for (const src of lines) {
     try {
-      // eslint-disable-next-line no-new
       new RegExp(src, "i");
     } catch (e) {
       errors.push(`${src}: ${e.message}`);
