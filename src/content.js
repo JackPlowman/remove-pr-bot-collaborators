@@ -29,7 +29,11 @@ function compileRegexes(sources) {
       out.push(new RegExp(src, "i"));
     } catch (e) {
       // Ignore invalid regex; keep going.
-      console.warn("[Remove PR Bot Collaborators] Invalid regex source skipped:", src, e);
+      console.warn(
+        "[Remove PR Bot Collaborators] Invalid regex source skipped:",
+        src,
+        e,
+      );
     }
   }
   return out.length ? out : [new RegExp("\\[bot\\]", "i")];
@@ -40,13 +44,14 @@ async function loadPatterns() {
     const res = await chrome.storage.sync.get({
       botRegexSources: DEFAULT_REGEX_SOURCES,
     });
-    botRegexes = compileRegexes(
-      res?.botRegexSources || DEFAULT_REGEX_SOURCES,
-    );
+    botRegexes = compileRegexes(res?.botRegexSources || DEFAULT_REGEX_SOURCES);
     scheduleScan();
   } catch (e) {
     // In case storage isn't available, continue with defaults.
-    console.warn("[Remove PR Bot Collaborators] Failed to load patterns, using defaults:", e);
+    console.warn(
+      "[Remove PR Bot Collaborators] Failed to load patterns, using defaults:",
+      e,
+    );
   }
 }
 
@@ -111,7 +116,10 @@ function getPRAuthorUsername() {
       }
     }
   } catch (e) {
-    console.warn("[Remove PR Bot Collaborators] Failed to get PR author username:", e);
+    console.warn(
+      "[Remove PR Bot Collaborators] Failed to get PR author username:",
+      e,
+    );
   }
   return null;
 }
@@ -192,7 +200,9 @@ function cleanCommitMessageValue(value) {
             } else {
               // Alternatively, remove any lone '---' if no remaining metadata
               if (!filtered.some((l) => isCoAuthorLine(l))) {
-                const sepIdx = filtered.findIndex((l) => /^\s*-{3,}\s*$/.test(l));
+                const sepIdx = filtered.findIndex((l) =>
+                  /^\s*-{3,}\s*$/.test(l),
+                );
                 if (sepIdx !== -1) {
                   filtered.splice(sepIdx, 1);
                   changed = true;
@@ -221,8 +231,8 @@ function processTextareas() {
   for (const ta of textareas) {
     // Only touch textareas that look like commit messages:
     // Heuristic: contains "Co-authored-by:" which GitHub adds during merges.
-  const val = ta.value;
-  if (typeof val !== "string") continue;
+    const val = ta.value;
+    if (typeof val !== "string") continue;
 
     const { text, changed } = cleanCommitMessageValue(val);
     if (changed && text !== val) {
