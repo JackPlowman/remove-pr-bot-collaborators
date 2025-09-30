@@ -110,7 +110,9 @@ function getPRAuthorUsername() {
         return txt.toLowerCase();
       }
     }
-  } catch {}
+  } catch {
+
+  }
   return null;
 }
 
