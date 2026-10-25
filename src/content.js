@@ -128,7 +128,8 @@ function extractUsernameCandidates(email, name) {
   const out = new Set();
   const lc = (s) => (s || "").toLowerCase();
 
-  const [localRaw = "", domain = ""] = (email || "").split("@");
+  const emailParts = (email || "").split("@");
+  const [localRaw = "", domain = ""] = emailParts;
   const local = lc(localRaw);
   const dom = lc(domain);
 
@@ -136,9 +137,12 @@ function extractUsernameCandidates(email, name) {
   if (local.includes("+")) {
     const [left, right] = local.split("+", 2);
     if (left) out.add(left);
-    if (right) out.add(right);
     // For GitHub noreply pattern: id+username@users.noreply.github.com
-    if (dom.endsWith("users.noreply.github.com") && right) {
+    if (
+      emailParts.length === 2 &&
+      dom === "users.noreply.github.com" &&
+      right
+    ) {
       out.add(right);
     }
   }

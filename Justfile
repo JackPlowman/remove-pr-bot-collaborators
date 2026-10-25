@@ -4,13 +4,13 @@
 
 # Install Node Dependencies
 install:
-    npm install
+    npm ci
 
-# Lint typescript code with ESLint
+# Lint JavaScript code with ESLint
 lint:
     cd src && npx eslint .
 
-# Lint typescript code with ESLint and generate a SARIF file
+# Lint JavaScript code with ESLint and generate a SARIF file
 eslint-with-sarif:
     cd src && npx eslint . --format @microsoft/eslint-formatter-sarif --output-file eslint-results.sarif
 
@@ -32,11 +32,11 @@ src-prettier-format:
 
 # Check all files with prettier
 prettier-check:
-    prettier . --check
+    npx prettier . --check
 
 # Format all files with prettier
 prettier-format:
-    prettier . --check --write
+    npx prettier . --write
 
 # ------------------------------------------------------------------------------
 # Justfile
@@ -64,7 +64,7 @@ gitleaks-detect:
 
 # Run prek checking on all pre-commit config files
 prek-check:
-    find . -name "pre-commit-config.*" -exec prek validate-config -c {} \;
+    prek validate-config .pre-commit-config.yaml
 
 # ------------------------------------------------------------------------------
 # Zizmor
@@ -125,7 +125,7 @@ prek-update:
 
 # Prek update hooks
 prek-update-hooks:
-    prek update --freeze
+    prek autoupdate --freeze
 
 prek-update-additional-dependencies:
     uv run --script https://raw.githubusercontent.com/JackPlowman/update-prek-additional-dependencies/refs/heads/main/update_prek_additional_dependencies.py

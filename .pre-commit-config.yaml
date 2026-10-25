@@ -1,0 +1,27 @@
+minimum_prek_version: "0.5.7"
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: 3e8a8703264a2f4a69428a0aa4dcb512790b2c8c # frozen: v6.0.0
+    hooks:
+      - id: check-merge-conflict
+      - id: check-case-conflict
+      - id: check-added-large-files
+      - id: detect-private-key
+      - id: check-yaml
+        args: [--unsafe]
+      - id: check-json
+  - repo: https://github.com/zizmorcore/zizmor-pre-commit
+    rev: c92afdf2c6ca336aaa8f39e2bd8d48f62dbd8e1f # frozen: v1.31.1
+    hooks:
+      - id: zizmor
+        args: [--persona=auditor]
+  - repo: local
+    hooks:
+      - id: prettier
+        name: Check formatting
+        language: node
+        entry: prettier
+        additional_dependencies: [prettier@3.9.10]
+        args: [., --check]
+        pass_filenames: false
